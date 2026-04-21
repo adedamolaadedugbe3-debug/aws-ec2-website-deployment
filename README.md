@@ -1,5 +1,6 @@
 # AWS EC2 Website Deployment
-
+## 🌐 Live Demo
+http://13.42.12.227
 ## Project Overview
 This project demonstrates how I deployed a static website on AWS EC2 using Amazon Linux and Apache HTTP Server.
 
