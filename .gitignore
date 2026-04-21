@@ -1,0 +1,7 @@
+*.pem
+*.key
+*.csv
+.env
+terraform.tfstate
+terraform.tfstate.backup
+.terraform/
