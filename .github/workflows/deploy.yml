@@ -1,38 +1,14 @@
-name: Deploy Docker Website to EC2
-
-on:
-  push:
-    branches:
-      - main
-
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Copy files to EC2
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USER }}
-          key: ${{ secrets.EC2_KEY }}
-          source: "index.html,Dockerfile"
-          target: "/home/ec2-user/app"
-
-      - name: Deploy app on EC2 with Docker
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USER }}
-          key: ${{ secrets.EC2_KEY }}
-          script: |
-            cd /home/ec2-user/app
-            sudo systemctl stop httpd || true
-            sudo systemctl disable httpd || true
-            docker stop myapp-container || true
-            docker rm myapp-container || true
-            docker build -t myapp .
-            docker run -d --name myapp-container -p 80:80 myapp
+- name: Deploy app on EC2 with Docker
+  uses: appleboy/ssh-action@v1.0.3
+  with:
+    host: ${{ secrets.EC2_HOST }}
+    username: ${{ secrets.EC2_USER }}
+    key: ${{ secrets.EC2_KEY }}
+    script: |
+      cd /home/ec2-user/app
+      sudo systemctl stop httpd || true
+      sudo systemctl disable httpd || true
+      docker stop $(docker ps -q) || true
+      docker rm $(docker ps -aq) || true
+      docker build -t myapp .
+      docker run -d --name myapp-container -p 80:80 myapp
